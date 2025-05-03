@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>The Oppositions</title>
+
+    <!-- Recommended meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <!-- PyScript CSS -->
+    <link rel="stylesheet" href="https://pyscript.net/releases/2023.12.1/core.css">
+
+    <!-- This script tag bootstraps PyScript -->
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <style>
+		.dashboard {
+            vertical-align: top;
+        }
+		
+		.button {
+		  background-color: #4CAF50; /* Green */
+		  border: none;
+		  color: white;
+		  padding: 15px 32px;
+		  text-align: center;
+		  text-decoration: none;
+		  display: inline-block;
+		  font-size: 16px;
+		}
+		
+        .left {
+            width: 600px;
+            height: 350px;
+            border: 3px solid black;
+            overflow: hidden;
+            border-radius: 15px;
+            margin: 0px auto;
+			align: justify;
+            float: left;
+        }
+
+        .right {
+            width: 600px;
+            height: 350px;
+            border: 3px solid black;
+            overflow: hidden;
+            border-radius: 15px;
+            margin: 0px auto;
+			align: justify;
+            float: right;
+        }
+
+        .visual {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 50%;
+        }
+ 
+        ul {
+            margin: 1px;
+            padding: 1px;
+        }
+ 
+        li {
+            text-align: center;
+            border-bottom: 2px solid blue;
+        }
+ 
+        h1 {
+            color: black;
+        }
+
+        button {
+           width: 170px;
+           height: 50px;
+        }
+
+        #loading { outline: none; border: none; background: transparent }
+    </style>
+    <script type="module">
+        const loading = document.getElementById('loading');
+        addEventListener('py:ready', () => loading.close());
+        loading.showModal();
+    </script>
+</head>
+<body style="text-align:center;">
+    <dialog id="loading">
+            <h1>Loading...</h1>
+    </dialog>
+    <h1>The Oppositions</h1>
+	<img src="https://loodibee.com/wp-content/uploads/nba-logo-transparent.png" alt="NBA" style="width:150px;height:150px;">
+	<br>
+    <button type="button" py-click="main" onclick="DisplayTeam()">
+			FIGHT!
+    </button>
+	<div class="dashboard">
+		<div class="left" display="flex">
+			<ul id="team1container">
+				<li>
+					<h1>Select a First Team</h1>
+					<select name="team1" id="team1">
+					  <option value="Atlanta Hawks">Atlanta Hawks</option>
+					  <option value="Boston Celtics">Boston Celtics</option>
+					  <option value="Brooklyn Nets">Brooklyn Nets</option>
+					  <option value="Charlotte Hornets">Charlotte Hornets</option>
+					  <option value="Chicago Bulls">Chicago Bulls</option>
+					  <option value="Cleveland Cavaliers">Cleveland Cavaliers</option>
+					  <option value="Dallas Mavericks">Dallas Mavericks</option>
+					  <option value="Denver Nuggets">Denver Nuggets</option>
+					  <option value="Detroit Pistons">Detroit Pistons</option>
+					  <option value="Golden State Warriors">Golden State Warriors</option>
+					  <option value="Houston Rockets">Houston Rockets</option>
+					  <option value="Indiana Pacers">Indiana Pacers</option>
+					  <option value="Los Angeles Clippers">Los Angeles Clippers</option>
+					  <option value="Los Angeles Lakers">Los Angeles Lakers</option>
+					  <option value="Memphis Grizzlies">Memphis Grizzlies</option>
+					  <option value="Miami Heat">Miami Heat</option>
+					  <option value="Milwaukee Bucks">Milwaukee Bucks</option>
+					  <option value="Minnesota Timberwolves">Minnesota Timberwolves</option>
+					  <option value="New York Knicks">New York Knicks</option>
+					  <option value="New Orleans Pelicans">New Orleans Pelicans</option>
+					  <option value="Oklahoma City Thunder">Oklahoma City Thunder</option>
+					  <option value="Orlando Magic">Orlando Magic</option>
+					  <option value="Philadelphia 76ers">Philadelphia 76ers</option>
+					  <option value="Phoenix Suns">Phoenix Suns</option>
+					  <option value="Portland Trailblazers">Portland Trailblazers</option>
+					  <option value="Sacramento Kings">Sacramento Kings</option>
+					  <option value="San Antonio Spurs">San Antonio Spurs</option>
+					  <option value="Toronto Raptors">Toronto Raptors</option>
+					  <option value="Utah Jazz">Utah Jazz</option>
+					  <option value="Washington Wizards">Washington Wizards</option>
+					</select>
+				</li>
+                <p id="team1picture"></p>
+				<h2 id="team1display"></h2>
+			</ul>
+		</div>
+		<div class="right" display="flex">
+			<ul id="team2container">
+				<li>
+					<h1>Select a Second Team</h1>
+					<select name="team2" id="team2">
+					  <option value="Atlanta Hawks">Atlanta Hawks</option>
+					  <option value="Boston Celtics">Boston Celtics</option>
+					  <option value="Brooklyn Nets">Brooklyn Nets</option>
+					  <option value="Charlotte Hornets">Charlotte Hornets</option>
+					  <option value="Chicago Bulls">Chicago Bulls</option>
+					  <option value="Cleveland Cavaliers">Cleveland Cavaliers</option>
+					  <option value="Dallas Mavericks">Dallas Mavericks</option>
+					  <option value="Denver Nuggets">Denver Nuggets</option>
+					  <option value="Detroit Pistons">Detroit Pistons</option>
+					  <option value="Golden State Warriors">Golden State Warriors</option>
+					  <option value="Houston Rockets">Houston Rockets</option>
+					  <option value="Indiana Pacers">Indiana Pacers</option>
+					  <option value="Los Angeles Clippers">Los Angeles Clippers</option>
+					  <option value="Los Angeles Lakers">Los Angeles Lakers</option>
+					  <option value="Memphis Grizzlies">Memphis Grizzlies</option>
+					  <option value="Miami Heat">Miami Heat</option>
+					  <option value="Milwaukee Bucks">Milwaukee Bucks</option>
+					  <option value="Minnesota Timberwolves">Minnesota Timberwolves</option>
+					  <option value="New York Knicks">New York Knicks</option>
+					  <option value="New Orleans Pelicans">New Orleans Pelicans</option>
+					  <option value="Oklahoma City Thunder">Oklahoma City Thunder</option>
+					  <option value="Orlando Magic">Orlando Magic</option>
+					  <option value="Philadelphia 76ers">Philadelphia 76ers</option>
+					  <option value="Phoenix Suns">Phoenix Suns</option>
+					  <option value="Portland Trailblazers">Portland Trailblazers</option>
+					  <option value="Sacramento Kings">Sacramento Kings</option>
+					  <option value="San Antonio Spurs">San Antonio Spurs</option>
+					  <option value="Toronto Raptors">Toronto Raptors</option>
+					  <option value="Utah Jazz">Utah Jazz</option>
+					  <option value="Washington Wizards">Washington Wizards</option>
+					</select>
+				</li>
+                <p id="team2picture"></p>
+				<h2 id="team2display"></h2>
+			</ul>
+		</div>
+        <div class="visual" id="donut"></div>
+		
+		<script type="text/javascript">
+			function DisplayTeam() {
+				var team1name = document.getElementsByName('team1')[0];
+				var team1nametext = team1name.options[team1name.selectedIndex].text;
+				
+				var team2name = document.getElementsByName('team2')[0];
+				var team2nametext = team2name.options[team2name.selectedIndex].text;
+				
+				// Lower case team name and pass in url
+				var lower1 = team1nametext.toLowerCase();
+				var lower2 = team2nametext.toLowerCase();
+				
+				lower1 = lower1.split(' ').join('-');
+				lower2 = lower2.split(' ').join('-');
+				
+				var img1 = "https://loodibee.com/wp-content/uploads/nba-" + lower1 + "-logo-300x300.png"
+				var img2 = "https://loodibee.com/wp-content/uploads/nba-" + lower2 + "-logo-300x300.png"
+				
+				if (team1nametext == "Denver Nuggets"){
+					img1 = "https://loodibee.com/wp-content/uploads/nba-denver-nuggets-logo-2018-300x300.png";
+				}
+				if (team2nametext == "Denver Nuggets"){
+					img2 = "https://loodibee.com/wp-content/uploads/nba-denver-nuggets-logo-2018-300x300.png";
+				}
+				if (team1nametext == "Los Angeles Clippers"){
+					img1 = "https://loodibee.com/wp-content/uploads/los-angeles-clippers-logo-symbol.png";
+				}
+				if (team2nametext == "Los Angeles Clippers"){
+					img2 = "https://loodibee.com/wp-content/uploads/los-angeles-clippers-logo-symbol.png";
+				}
+				if (team1nametext == "Portland Trailblazers"){
+					img1 = "https://loodibee.com/wp-content/uploads/portland-trail-blazers-logo-symbol-300x300.png";
+				}
+				if (team2nametext == "Portland Trailblazers"){
+					img2 = "https://loodibee.com/wp-content/uploads/portland-trail-blazers-logo-symbol-300x300.png";
+				}
+	 
+				document.getElementById("team1picture").innerHTML = "<br>";
+				document.getElementById("team2picture").innerHTML = "<br>";
+				
+				ShowImage(img1, 
+                 150, 
+                 150, 
+                 'Team 1 Logo',
+				 "team1picture");
+				 
+				ShowImage(img2,  
+                 150, 
+                 150, 
+                 'Team 2 Logo',
+				 "team2picture");
+			}
+		</script>
+		<script type="text/javascript">
+			function ShowImage(src, width, height, alt, eID) {
+			var img = document.createElement("img");
+			img.src = src;
+			img.width = width;
+			img.height = height;
+			img.alt = alt;
+
+			// Adds to place specified
+			document.getElementById(eID).appendChild(img);
+			}
+		</script>
+        <script type="py" src="./main.py" config="./pyscript.toml"></script>
+	</div>
+</body>
+</html>
