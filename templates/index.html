@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NBA Player Search</title>
+  <style>
+    body { font-family: Arial; margin: 40px; }
+    .search-container { position: relative; width: 300px; }
+    input[type="text"] {
+      width: 100%; padding: 10px; font-size: 16px;
+    }
+    .suggestions {
+      position: absolute; background: #fff; border: 1px solid #ccc;
+      width: 100%; z-index: 1000; max-height: 200px; overflow-y: auto;
+    }
+    .suggestions div {
+      padding: 10px; cursor: pointer;
+    }
+    .suggestions div:hover {
+      background-color: #eee;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Search for an NBA Player</h2>
+<div class="search-container">
+  <input type="text" id="playerInput" placeholder="Start typing a player's name...">
+  <div class="suggestions" id="suggestions"></div>
+</div>
+
+<script>
+  const input = document.getElementById('playerInput');
+  const suggestionsContainer = document.getElementById('suggestions');
+
+  input.addEventListener('input', async () => {
+    const query = input.value.trim();
+    suggestionsContainer.innerHTML = '';
+
+    if (query.length === 0) return;
+
+    const res = await fetch(`/search_players?q=${encodeURIComponent(query)}`);
+    const matches = await res.json();
+
+    matches.forEach(name => {
+      const div = document.createElement('div');
+      div.textContent = name;
+      div.onclick = () => {
+        input.value = name;
+        suggestionsContainer.innerHTML = '';
+      };
+      suggestionsContainer.appendChild(div);
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-container')) {
+      suggestionsContainer.innerHTML = '';
+    }
+  });
+</script>
+
+</body>
+</html>
