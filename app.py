@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, render_template, request
 from nba_api.stats.static import players
+import script
 
 app = Flask(__name__)
 
