@@ -65,6 +65,7 @@ def main():
         player_id = get_player_id(player_name)
         if not player_id:
             print(f"No NBA player found with the name '{player_name}'.")
+            print("Your final score is:", score)
             return
 
         teams_played_for = get_teams_player_played_for(player_id)
