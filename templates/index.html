@@ -8,7 +8,8 @@
 </head>
 <body class="bg-light py-5">
 
-  <div class="container text-center">
+  <div class="container text-center d-flex justify-content-center">
+    <div class="w-100" style="max-width: 500px;">
     <!-- Logo Centered at the Top -->
     <div class="text-center mb-3">
         <img src="{{ url_for('static', filename='logo1.png')}}" width="150" height="150">
@@ -16,7 +17,7 @@
     <h1 class="mb-4">🏀 H2H NBA Team Match</h1>
     <h4>Current Score: <span id="score">{{ score }}</span></h4>
 
-    <div class="card p-4 shadow-sm mt-3">
+    <div class="card p-4 shadow-sm mt-3" width="600">
       <h4 class="mb-3">Did a player play for both of these teams?</h4>
       <p><strong>Team One:</strong> <span id="teamOneLabel">{{ team_one }}</span></p>
       <p><strong>Team Two:</strong> <span id="teamTwoLabel">{{ team_two }}</span></p>

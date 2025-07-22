@@ -8,8 +8,13 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Needed for session
 
 # Team data
-team_abvs = ['ATL', 'BOS', 'BKN', 'CHA', 'CHI', 'CLE', 'DAL', 'DEN', 'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA',
-             'MIL', 'MIN', 'NYK', 'NOH', 'OKC', 'ORL', 'PHI', 'PHO', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS']
+#team_abvs = ['ATL', 'BOS', 'BKN', 'CHA', 'CHI', 'CLE', 'DAL', 'DEN', 'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA',
+#             'MIL', 'MIN', 'NYK', 'NOH', 'OKC', 'ORL', 'PHI', 'PHO', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS']
+
+team_abvs = ['1610612737', '1610612738', '1610612751', '1610612766', '1610612741', '1610612739', '1610612742', '1610612743',
+             '1610612765', '1610612744', '1610612745', '1610612754', '1610612746', '1610612747', '1610612763', '1610612748',
+             '1610612749', '1610612750', '1610612752', '1610612740', '1610612760', '1610612753', '1610612755', '1610612756',
+             '1610612757', '1610612758', '1610612759', '1610612761', '1610612762', '1610612764']
 
 teams_names = ['Atlanta Hawks', 'Boston Celtics', 'Brooklyn Nets', 'Charlotte Hornets', 'Chicago Bulls',
                'Cleveland Cavaliers', 'Dallas Mavericks', 'Denver Nuggets', 'Detroit Pistons', 'Golden State Warriors',
@@ -29,9 +34,9 @@ def get_player_id(player_name):
 
 def get_teams_player_played_for(player_id):
     career = playercareerstats.PlayerCareerStats(player_id=player_id)
-    time.sleep(0.6)
+    time.sleep(1.0)
     df = career.get_data_frames()[0]
-    return set(df['TEAM_ABBREVIATION'].dropna().unique())
+    return set(df['TEAM_ID'].dropna().unique())
 
 def get_team_abbreviation(team_name):
     if team_name in teams_names:
@@ -55,6 +60,7 @@ def check_player():
 
     team_one_abv = get_team_abbreviation(team_one)
     team_two_abv = get_team_abbreviation(team_two)
+    print(team_one_abv, team_two_abv)
 
     player_id = get_player_id(player_name)
     if not player_id:
@@ -64,10 +70,10 @@ def check_player():
             "score": session.get('score', 0)
         })
 
-    teams_played_for = get_teams_player_played_for(player_id)
-    cleaned_teams_played_for = ['SAS' if item == 'SAN' else item for item in teams_played_for]
+    teams_played_for = str(get_teams_player_played_for(player_id))
+    print(teams_played_for)
 
-    if team_one_abv in cleaned_teams_played_for and team_two_abv in cleaned_teams_played_for:
+    if team_one_abv in teams_played_for and team_two_abv in teams_played_for:
         session['score'] = session.get('score', 0) + 1
         return jsonify({
             "status": "success",

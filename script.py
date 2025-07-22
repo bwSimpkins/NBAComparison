@@ -3,81 +3,42 @@ import time
 from nba_api.stats.endpoints import playercareerstats
 import random
 
-team_abvs = ['ATL', 'BOS', 'NJN', 'CHA', 'CHI', 'CLE', 'DAL', 'DEN', 'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA',
-        'MIL', 'MIN', 'NYK', 'NOH', 'OKC', 'ORL', 'PHI', 'PHO', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS']
+team_abvs = ['1610612737', '1610612738', '1610612751', '1610612766', '1610612741', '1610612739', '1610612742', '1610612743',
+             '1610612765', '1610612744', '1610612745', '1610612754', '1610612746', '1610612747', '1610612763', '1610612748',
+             '1610612749', '1610612750', '1610612752', '1610612740', '1610612760', '1610612753', '1610612755', '1610612756',
+             '1610612757', '1610612758', '1610612759', '1610612761', '1610612762', '1610612764']
 
-teams_names = ['Atlanta Hawks', 'Boston Celtics', 'Brooklyn Nets', 'Charlotte Hornets', 'Chicago Bulls',
-                'Cleveland Cavaliers', 'Dallas Mavericks', 'Denver Nuggets', 'Detroit Pistons', 'Golden State Warriors',
-                'Houston Rockets', 'Indiana Pacers', 'Los Angeles Clippers', 'Los Angeles Lakers', 'Memphis Grizzlies',
-                'Miami Heat', 'Milwaukee Bucks', 'Minnesota Timberwolves', 'New York Knicks', 'New Orleans Pelicans',
-                'Oklahoma City Thunder', 'Orlando Magic', 'Philadelphia 76ers', 'Phoenix Suns', 'Portland Trailblazers',
-                'Sacramento Kings', 'San Antonio Spurs', 'Toronto Raptors', 'Utah Jazz', 'Washington Wizards']
+all_players = players.get_players()
+player_names = [p['full_name'] for p in all_players]
 
 def get_player_id(player_name):
-    all_players = players.get_players()
     for player in all_players:
         if player_name.lower() == player['full_name'].lower():
             return player['id']
     return None
 
-def get_team_names():
-    return [team['full_name'] for team in teams.get_teams()]
-
 def get_teams_player_played_for(player_id):
     career = playercareerstats.PlayerCareerStats(player_id=player_id)
-    time.sleep(1)  # avoid rate limiting
-
-    df = career.get_data_frames()[0]  # This is a DataFrame with player’s seasons
-
-    teams_played_for = set(df['TEAM_ABBREVIATION'].dropna().unique())
-    return teams_played_for
-
-def get_team_abbreviation(team_name):
-    # Gets teams abbreviation
-    index = 0
-    for name in teams_names:
-        if team_name == name:
-            team_abv = team_abvs[index]
-        index += 1
-
-    return team_abv
+    time.sleep(0.6)
+    df = career.get_data_frames()[0]
+    return df
 
 def main():
-    # Main game loop
-    continue_game = True
-    score = 0
-    while continue_game:
-        # Randomly get two teams
-        team_name_one = random.choice(teams_names)
-        team_name_two = random.choice(teams_names)
+    player_id = get_player_id("Tim Duncan")
+    teams_played_for = get_teams_player_played_for(player_id)
+    print(teams_played_for)
 
-        # Ensure that the teams aren't the same
-        while team_name_one == team_name_two:
-            random.choice(teams_names)
+    player_id = get_player_id("Vince Carter")
+    teams_played_for = get_teams_player_played_for(player_id)
+    print(teams_played_for)
 
-        print("Team One:", team_name_one)
-        print("Team Two:", team_name_two)
+    player_id = get_player_id("John Stockton")
+    teams_played_for = get_teams_player_played_for(player_id)
+    print(teams_played_for)
 
-        team_one_abv = get_team_abbreviation(team_name_one)
-        team_two_abv = get_team_abbreviation(team_name_two)
-        
-        player_name = input("Enter the NBA player's full name: ").strip()
-        player_id = get_player_id(player_name)
-        if not player_id:
-            print(f"No NBA player found with the name '{player_name}'.")
-            print("Your final score is:", score)
-            return
-
-        teams_played_for = get_teams_player_played_for(player_id)
-
-        if team_one_abv in teams_played_for and team_two_abv in teams_played_for:
-            print(f"✅ Yes, {player_name} has played for both teams.")
-            score += 1
-            print("Your current score is:", score)
-        else:
-            print(f"❌ No, {player_name} has not played for both teams.")
-            print("Your final score is:", score)
-            continue_game = False
+    player_id = get_player_id("John Wall")
+    teams_played_for = get_teams_player_played_for(player_id)
+    print(teams_played_for)
 
 if __name__ == "__main__":
     main()
