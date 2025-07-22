@@ -1,120 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Head 2 Head Player Match</title>
-
-  <!-- Bootstrap 5 CSS -->
+  <meta charset="UTF-8">
+  <title>NBA Player Team Match</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <style>
-    body {
-      background-color: #f8f9fa;
-      padding-top: 60px;
-    }
-    .search-container {
-      position: relative;
-      max-width: 500px;
-      margin: auto;
-    }
-    .suggestions {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      border: 1px solid #ced4da;
-      border-top: none;
-      background-color: #fff;
-      max-height: 300px;
-      overflow-y: auto;
-    }
-    .suggestion-item {
-      padding: 10px;
-      cursor: pointer;
-    }
-    .suggestion-item:hover {
-      background-color: #f1f1f1;
-    }
-  </style>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 </head>
-<body>
+<body class="bg-light py-5">
 
   <div class="container text-center">
-    <!-- Logo Centered at the Top -->
-    <div class="text-center mb-3">
-        <img src="{{ url_for('static', filename='logo1.png')}}" width="150" height="150">
-    </div>
-    <h1 class="mb-4">Head 2 Head NBA Player Match</h1>
+    <h1 class="mb-4">🏀 NBA Team Matcher</h1>
+    <h4>Current Score: <span id="score">{{ score }}</span></h4>
 
-    <form id="searchForm" onsubmit="return handleSubmit(event);">
-      <div class="search-container mb-3">
-        <input type="text" id="playerInput" class="form-control form-control-lg" placeholder="Start typing a player's name...">
-        <div id="suggestions" class="suggestions shadow-sm rounded-bottom"></div>
-      </div>
-      <button type="submit" class="btn btn-primary btn-lg">Submit</button>
-    </form>
+    <div class="card p-4 shadow-sm mt-3">
+      <h4 class="mb-3">Did a player play for both of these teams?</h4>
+      <p><strong>Team One:</strong> <span id="teamOneLabel">{{ team_one }}</span></p>
+      <p><strong>Team Two:</strong> <span id="teamTwoLabel">{{ team_two }}</span></p>
 
-    <div id="resultDisplay" class="mt-4">
-      <!-- Player name will show here -->
+      <form id="playerForm">
+        <div class="mb-3">
+          <input type="text" id="playerInput" class="form-control form-control-lg" name="playerName" placeholder="Enter player name" required>
+        </div>
+        <input type="hidden" name="teamOne" value="{{ team_one }}">
+        <input type="hidden" name="teamTwo" value="{{ team_two }}">
+        <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+        <button type="button" class="btn btn-secondary btn-lg mt-2" id="nextRoundBtn">Next Round</button>
+      </form>
+
+      <div id="result" class="mt-4"></div>
     </div>
   </div>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
   <script>
-    const input = document.getElementById('playerInput');
-    const suggestionsContainer = document.getElementById('suggestions');
-    const resultDisplay = document.getElementById('resultDisplay');
+    const form = document.getElementById('playerForm');
+    const resultDiv = document.getElementById('result');
+    const scoreDisplay = document.getElementById('score');
+    const playerInput = document.getElementById('playerInput');
 
-    input.addEventListener('input', async () => {
-      const query = input.value.trim();
-      suggestionsContainer.innerHTML = '';
-
-      if (query.length === 0) return;
-
-      const res = await fetch(`/search_players?q=${encodeURIComponent(query)}`);
-      const matches = await res.json();
-
-      matches.forEach(name => {
-        const div = document.createElement('div');
-        div.classList.add('suggestion-item');
-        div.textContent = name;
-        div.onclick = () => {
-          input.value = name;
-          suggestionsContainer.innerHTML = '';
-        };
-        suggestionsContainer.appendChild(div);
+    $(function () {
+      $("#playerInput").autocomplete({
+        source: function (request, response) {
+          $.ajax({
+            url: "/autocomplete",
+            data: { term: request.term },
+            success: function (data) {
+              response(data);
+            }
+          });
+        },
+        minLength: 2
       });
     });
 
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.search-container')) {
-        suggestionsContainer.innerHTML = '';
-      }
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      resultDiv.innerHTML = 'Checking...';
+
+      const formData = new FormData(form);
+      const res = await fetch('/check_player', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+      let alertType = 'info';
+      if (data.status === 'success') alertType = 'success';
+      else if (data.status === 'fail') alertType = 'danger';
+      else if (data.status === 'error') alertType = 'warning';
+
+      resultDiv.innerHTML = `<div class="alert alert-${alertType}">${data.message}</div>`;
+      scoreDisplay.textContent = data.score;
     });
 
-    function handleSubmit(event) {
-      event.preventDefault();
-      const selectedPlayer = input.value.trim();
-      if (selectedPlayer) {
-        resultDisplay.innerHTML = `
-          <div class="alert alert-success" role="alert">
-            You selected: <strong>${selectedPlayer}</strong>
-          </div>
-        `;
-      } else {
-        resultDisplay.innerHTML = `
-          <div class="alert alert-warning" role="alert">
-            ⚠️ Please select or type a valid player name.
-          </div>
-        `;
-      }
-      return false;
-    }
-  </script>
+    document.getElementById('nextRoundBtn').addEventListener('click', async () => {
+      const res = await fetch('/next_teams');
+      const data = await res.json();
 
+      document.querySelector('input[name="teamOne"]').value = data.team_one;
+      document.querySelector('input[name="teamTwo"]').value = data.team_two;
+      document.getElementById('teamOneLabel').textContent = data.team_one;
+      document.getElementById('teamTwoLabel').textContent = data.team_two;
+      scoreDisplay.textContent = data.score;
+
+      playerInput.value = '';
+      resultDiv.innerHTML = '';
+    });
+  </script>
 </body>
 </html>
