@@ -55,7 +55,6 @@ def check_player():
 
     team_one_abv = get_team_abbreviation(team_one)
     team_two_abv = get_team_abbreviation(team_two)
-    print(team_one_abv, team_two_abv)
 
     player_id = get_player_id(player_name)
     if not player_id:
